@@ -8,6 +8,7 @@ output: pdf_document
 ```{r}
 library(tidyverse)
 library(ggplot2)
+library(lubridate)
 
 sales_data <- read.csv('car_prices.csv')
 ```
@@ -49,5 +50,37 @@ ggplot(data = sample_sales_data, aes(x = sellingprice, y = odometer))+
 
 ```
 
+```{r}
 
+sample_sales_data <- sample_sales_data %>%
+  mutate(vehicle_age = year(saledate) - year)
+#create a column to find the age of the car at the time it was sold
+```
+
+```{r}
+sample_sales_data <- sample_sales_data %>%
+  mutate(vehicle_age = ifelse(vehicle_age < 0, 0, vehicle_age))
+#remove negative numbers from column
+```
+
+```{r}
+ggplot(data = sample_sales_data, aes(x = sellingprice, y = vehicle_age))+
+  geom_point()
+#this one will probably be better as a categorical variable
+
+```
+
+
+```{r}
+
+sample_sales_data <- sample_sales_data %>%
+  mutate(vehicle_age_cat = case_when(
+    vehicle_age >= 0 & vehicle_age <= 1 ~ "0-1",
+    vehicle_age >= 2 & vehicle_age <= 5 ~ "2-5",
+    vehicle_age > 5 & vehicle_age <= 10 ~ "6-10",
+    vehicle_age > 10 ~ "11+",
+    TRUE ~ "Unknown"
+  ))
+
+```
 
