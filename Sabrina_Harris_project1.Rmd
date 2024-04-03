@@ -1,0 +1,34 @@
+---
+title: "Project 1"
+author: "Sabrina Harris"
+date: "2024-03-28"
+output: pdf_document
+---
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+
+sales_data <- read.csv('car_prices.csv')
+```
+
+```{r}
+set.seed(559)
+
+sample_sales_data <- sample_n(sales_data,300)
+```
+
+
+```{r}
+sample_sales_data <- sample_sales_data %>%
+  mutate(saledate = sub(" GMT.*$", "", saledate),
+         saledate = mdy_hms(saledate), 
+         saledate = as.Date(saledate))
+
+sample_sales_data$saledate = as.Date(sample_sales_data$saledate)
+```
+
+
+
+
+
