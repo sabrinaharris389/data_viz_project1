@@ -84,3 +84,56 @@ sample_sales_data <- sample_sales_data %>%
 
 ```
 
+```{r}
+sample_sales_data <- sample_sales_data %>%
+  mutate(body = tolower(body)) 
+```
+
+
+```{r}
+sample_sales_data <- sample_sales_data %>%
+  mutate(across(everything(), ~na_if(trimws(.), "")))
+```
+
+
+```{r}
+ggplot(data = sample_sales_data, aes(x = color))+
+  geom_bar()+
+  facet_wrap(~body)
+```
+
+
+```{r}
+unique(sample_sales_data$body)
+```
+
+```{r}
+sample_sales_data <- sample_sales_data %>%
+  mutate(body_recode = case_when(
+    body %in% c("sedan", "coupe", "g sedan", "hatchback", "g coupe","convertible") ~ "Sedan",
+    body %in% c("suv",'hatchback','minivan') ~ "SUV",
+    TRUE ~ "Other"
+  ))
+```
+
+
+```{r}
+ggplot(data = sample_sales_data, aes(x = color))+
+  geom_bar()+
+  facet_wrap(~body_recode)
+```
+```{r}
+sample_sales_data <- sample_sales_data %>%
+  mutate(color_recode = case_when(
+    color %in% c("blue", "black", "silver", "gray", "red", "white") ~ color,
+    TRUE ~ "Other"
+  ))
+```
+
+```{r}
+ggplot(data = sample_sales_data, aes(x = color_recode))+
+  geom_bar()+
+  facet_wrap(~body_recode)
+```
+
+
