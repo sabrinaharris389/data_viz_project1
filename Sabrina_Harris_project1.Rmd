@@ -137,3 +137,65 @@ ggplot(data = sample_sales_data, aes(x = color_recode))+
 ```
 
 
+```{r}
+ggplot(data = sample_sales_data, aes(x = color_recode))+
+  geom_bar()+
+  labs(x = 'Color',
+       title = 'Color of Cars sold by Body Style',
+       subtitle = 'based on Kaggle Vehicle Sales Dataset')+
+  ylab(NULL)+
+  facet_wrap(~body_recode)+
+  theme_bw()
+```
+
+
+```{r}
+sales_data <- sales_data %>%
+  mutate(body = tolower(body)) %>%
+  mutate(across(everything(), ~na_if(trimws(.), ""))) %>%
+  mutate(body_recode = case_when(
+    body %in% c("sedan", "coupe", "g sedan", "hatchback", "g coupe","convertible") ~ "Sedan",
+    body %in% c("suv",'hatchback','minivan') ~ "SUV",
+    TRUE ~ "Other"
+  )) %>% 
+  mutate(color_recode = case_when(
+    color %in% c("blue", "black", "silver", "gray", "red", "white") ~ color,
+    TRUE ~ "Other"
+  ))
+  
+```
+
+```{r}
+ggplot(data = sales_data, aes(x = color_recode))+
+  geom_bar()+
+  labs(x = 'Color',
+       title = 'Color of Cars sold by Body Style',
+       subtitle = 'based on Kaggle Vehicle Sales Dataset')+
+  ylab(NULL)+
+  facet_wrap(~body_recode)+
+  theme_bw()
+```
+
+```{r}
+plot_data <- sales_data %>% group_by(body_recode) %>% count(color_recode) %>% mutate(Percent = 100*n/sum(n))
+plot_data
+```
+
+
+```{r}
+ggplot(data=plot_data, aes(x=color_recode, y=Percent, fill=color_recode)) +
+  geom_bar(stat="identity", color="black") +
+  theme_bw()+
+  guides(fill = 'none')+
+  facet_wrap(~body_recode)
+```
+```{r}
+plot_data %>%
+  ggplot(aes(x = body_recode, y = Percent, fill = color_recode, group = color_recode)) +
+  geom_bar(stat = "identity", position = "dodge", width = 0.6) +
+  labs(y = "Proportion", x = "Body Type", fill = "Color") +
+  
+  theme_minimal()
+```
+
+
