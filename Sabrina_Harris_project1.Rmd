@@ -35,7 +35,7 @@ sample_sales_data$saledate = as.Date(sample_sales_data$saledate)
 
 ```{r}
 ggplot(data = sample_sales_data, aes(x = sellingprice, y = odometer))+
-  geom_point(color = viridis(10)[6])+
+  geom_point(color = viridis(10)[6], alpha = 0.6)+
   labs(x = "Sale Price",
        y = "Odometer reading (miles)",
        title = 'Sale Price vs Odometer Reading',
@@ -49,7 +49,10 @@ ggplot(data = sample_sales_data, aes(x = sellingprice, y = odometer))+
                      breaks = c(0,50000,100000,150000,200000,250000,300000),
                      labels = c('0','50k','100k','150k','200k','250k','300k')
   )+
-  theme_bw()
+  theme_bw()+
+  theme(axis.text.x = element_text(face = 'bold',size = 10 ),
+        axis.text.y = element_text(face = 'bold',size = 10))+
+  guides(fill = 'none')
 #ggsave('scatterplot.png')
 ```
 
@@ -258,17 +261,23 @@ colors <- setNames(c("#0000FF", "#000000", "#C0C0C0", "#808080", "#FF0000", "#FF
 ```{r}
 
 ggplot(plot_data, aes(x=color_recode, y=Percent, fill=color_recode)) +
-  geom_bar(stat="identity", color="black") +
+  geom_bar(stat="identity", color="black", aes()) +
   scale_fill_manual(values = colors) + # Apply custom colors
-  labs(x = 'Color', title = 'Color of Cars sold by Body Style',
+  labs(
+       y = 'Percent of Sales',
+       title = 'Color of Cars sold by Body Style',
        subtitle = 'Based on Kaggle Vehicle Sales Dataset 2014-2015') +
-  scale_x_discrete(expand = c(0,0))+
+  scale_x_discrete(expand = c(0,0),
+                   limits = c('Black','Blue','Gray','Red','Silver','White','Other'))+
   scale_y_continuous(expand = c(0,0),
                      limits = c(0,32),
                      breaks = c(0,5,10,15,20,25,30),
                      labels = c('0%','5%','10%','15%','20%','25%','30%'))+
   theme_bw() +
   guides(fill = 'none') +
+  theme(axis.text.x = element_text(face = 'bold',size = 7 ),
+        axis.text.y = element_text(face = 'bold',size = 10),
+        axis.title.x = element_blank())+
   facet_wrap(~body_recode)
 #ggsave('histogram.png')
 ```
@@ -280,7 +289,7 @@ library(ggridges)
 mycolors <- viridis(10)[5:10]
 
 ggplot(data = sales_data, aes(x = sellingprice, y = body_recode, fill = body_recode ))+
-  geom_density_ridges()+
+  geom_density_ridges(alpha = 0.6)+
   labs(
     x = 'Selling Price',
     y = 'Body Style',
