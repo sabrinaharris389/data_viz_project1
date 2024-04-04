@@ -9,6 +9,9 @@ output: pdf_document
 library(tidyverse)
 library(ggplot2)
 library(lubridate)
+library(ggpubr)
+library(forcats)
+
 
 sales_data <- read.csv('car_prices.csv')
 ```
@@ -185,6 +188,9 @@ plot_data
 ```{r}
 ggplot(data=plot_data, aes(x=color_recode, y=Percent, fill=color_recode)) +
   geom_bar(stat="identity", color="black") +
+  labs(x = 'Color',
+       title = 'Color of Cars sold by Body Style',
+       subtitle = 'Based on Kaggle Vehicle Sales Dataset 2014-2015')+
   theme_bw()+
   guides(fill = 'none')+
   facet_wrap(~body_recode)
@@ -197,5 +203,74 @@ plot_data %>%
   
   theme_minimal()
 ```
+
+```{r}
+sales_data$sellingprice <- as.numeric(sales_data$sellingprice)
+```
+
+
+```{r}
+
+ggplot(data = sales_data, aes(x = sellingprice))+
+  geom_density(color = 'black', fill = 'purple')+
+  scale_x_continuous(limits = c(0,75000))+
+  theme_bw()+
+  theme(axis.line.y=element_blank(),
+axis.text.y=element_blank(),
+axis.ticks.y=element_blank(),
+axis.title.y=element_blank())
+```
+```{r}
+sample_sales_data$sellingprice <- as.numeric(sample_sales_data$sellingprice)
+sample_sales_data$odometer <- as.numeric(sample_sales_data$odometer)
+```
+
+```{r}
+
+ggscatterhist(
+    sample_sales_data, x = "sellingprice", y = "odometer",
+    margin.plot = "histogram",
+    bins=15,
+    margin.params = list(fill = "lightblue", color = "black")
+    )
+```
+
+
+
+```{r}
+library(forcats)
+
+# Assuming 'plot_data' is your dataframe
+plot_data <- plot_data %>%
+  mutate(color_recode = fct_relevel(color_recode, "Other", after = Inf), # Move "Other" to the end
+         body_recode = fct_relevel(body_recode, "Other", after = Inf),   # Move "Other" for body_recode to the end
+         color_recode = fct_infreq(color_recode) %>% fct_rev(), # Order colors by frequency, then reverse
+         color_recode = as.factor(tools::toTitleCase(as.character(color_recode)))) # Capitalize color names
+
+# Define a named vector with colors, including 'Other' as pink
+colors <- setNames(c("#0000FF", "#000000", "#C0C0C0", "#808080", "#FF0000", "#FFFFFF", "#FFC0CB"), 
+                   c("Blue", "Black", "Silver", "Gray", "Red", "White", "Other"))
+
+
+
+```
+
+```{r}
+# Plot
+ggplot(plot_data, aes(x=color_recode, y=Percent, fill=color_recode)) +
+  geom_bar(stat="identity", color="black") +
+  scale_fill_manual(values = colors) + # Apply custom colors
+  labs(x = 'Color', title = 'Color of Cars sold by Body Style',
+       subtitle = 'Based on Kaggle Vehicle Sales Dataset 2014-2015') +
+  scale_x_discrete(expand = c(0,0))+
+  scale_y_continuous(expand = c(0,0),
+                     limits = c(0,32),
+                     breaks = c(0,5,10,15,20,25,30),
+                     labels = c('0%','5%','10%','15%','20%','25%','30%'))+
+  theme_bw() +
+  guides(fill = 'none') +
+  facet_wrap(~body_recode)
+```
+
 
 
