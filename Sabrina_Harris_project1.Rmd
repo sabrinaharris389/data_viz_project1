@@ -274,4 +274,29 @@ ggplot(plot_data, aes(x=color_recode, y=Percent, fill=color_recode)) +
 ```
 
 
+```{r}
+library(ggridges)
+
+mycolors <- viridis(10)[5:10]
+
+ggplot(data = sales_data, aes(x = sellingprice, y = body_recode, fill = body_recode ))+
+  geom_density_ridges()+
+  labs(
+    x = 'Selling Price',
+    y = 'Body Style',
+    title = 'Selling Price Distribution by Body Style',
+    subtitle = 'Based on Kaggle Vehicle Sales Dataset 2014-2015'
+  )+
+  scale_fill_manual(values = mycolors)+
+  scale_x_continuous(
+    expand = c(0,0),
+    limits = c(0,62000),
+    breaks = c(0,10000,20000,30000,40000,50000,60000),
+    labels = c('$0','$10k','$20k','$30k','$40k','$50k','$60k')
+  )+
+  scale_y_discrete(expand = c(0,0))+
+  guides(fill = 'none')+
+  theme_bw()
+#ggsave('density.png')
+```
 
