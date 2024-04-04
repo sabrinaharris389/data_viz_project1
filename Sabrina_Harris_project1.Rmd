@@ -11,7 +11,7 @@ library(ggplot2)
 library(lubridate)
 library(ggpubr)
 library(forcats)
-
+library(viridis)
 
 sales_data <- read.csv('car_prices.csv')
 ```
@@ -35,11 +35,11 @@ sample_sales_data$saledate = as.Date(sample_sales_data$saledate)
 
 ```{r}
 ggplot(data = sample_sales_data, aes(x = sellingprice, y = odometer))+
-  geom_point()+
+  geom_point(color = viridis(10)[6])+
   labs(x = "Sale Price",
        y = "Odometer reading (miles)",
        title = 'Sale Price vs Odometer Reading',
-       subtitle = 'Based on Kaggle Vehicle Sales Dataset')+
+       subtitle = 'Based on Kaggle Vehicle Sales Dataset 2014-2015')+
   scale_x_continuous(expand = c(0,0),
                      limits = c(-1000,85000),
                      breaks = c(0,10000,20000,30000,40000,50000,60000,70000,80000),
@@ -50,7 +50,7 @@ ggplot(data = sample_sales_data, aes(x = sellingprice, y = odometer))+
                      labels = c('0','50k','100k','150k','200k','250k','300k')
   )+
   theme_bw()
-
+#ggsave('scatterplot.png')
 ```
 
 ```{r}
@@ -240,7 +240,7 @@ ggscatterhist(
 ```{r}
 library(forcats)
 
-# Assuming 'plot_data' is your dataframe
+
 plot_data <- plot_data %>%
   mutate(color_recode = fct_relevel(color_recode, "Other", after = Inf), # Move "Other" to the end
          body_recode = fct_relevel(body_recode, "Other", after = Inf),   # Move "Other" for body_recode to the end
@@ -256,7 +256,7 @@ colors <- setNames(c("#0000FF", "#000000", "#C0C0C0", "#808080", "#FF0000", "#FF
 ```
 
 ```{r}
-# Plot
+
 ggplot(plot_data, aes(x=color_recode, y=Percent, fill=color_recode)) +
   geom_bar(stat="identity", color="black") +
   scale_fill_manual(values = colors) + # Apply custom colors
@@ -270,6 +270,7 @@ ggplot(plot_data, aes(x=color_recode, y=Percent, fill=color_recode)) +
   theme_bw() +
   guides(fill = 'none') +
   facet_wrap(~body_recode)
+#ggsave('histogram.png')
 ```
 
 
